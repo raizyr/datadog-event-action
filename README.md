@@ -17,7 +17,7 @@ Originally based on [Glennmen/datadog-event-action](https://github.com/Glennmen/
 
 ```
 - name: DataDog Event
-  uses: raizyr/datadog-event-action@1.0.0
+  uses: raizyr/datadog-event-action@v1
   with:
     datadog_api_key: ${{ secrets.DD_API_KEY }}
     title: Build Succeeded
