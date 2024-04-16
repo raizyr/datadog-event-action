@@ -77,7 +77,7 @@ jobs:
             [Link to Datadog](https://www.datadoghq.com/)
           USE_MARKDOWN: true
           EVENT_PRIORITY: low
-          EVENT_TAGS: '["env:testing", "team:devops", "role:testing-event-action]'
+          EVENT_TAGS: '["env:testing", "team:devops", "role:testing-event-action"]'
           EVENT_ALERT_TYPE: info
           EVENT_AGGREGATION_KEY: ${{ github.run_id }}
         run: |
@@ -123,7 +123,7 @@ jobs:
           use_markdown: true
           priority: low
           aggregation_key: ${{ github.run_id }}
-          tags: '["env:testing", "team:devops", "role:testing-event-action]'
+          tags: '["env:testing", "team:devops", "role:testing-event-action"]'
           alert_type: info
 
       - name: Print Output
