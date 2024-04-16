@@ -1,0 +1,134 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+  push:
+    branches:
+      - main
+      - master
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository}}
+
+permissions:
+  contents: read
+
+jobs:
+  build-docker:
+    name: Build Docker Action
+    runs-on: ubuntu-latest
+
+    # Run a local registry to push to
+    services:
+      registry:
+        image: registry:2
+        ports:
+          - 5001:5000
+    env:
+      TEST_TAG: localhost:5001/raizyr/datadog-event-action:latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Docker BuildX
+        id: setup-buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+          driver-opts: network=host
+
+      - name: Log into the GH Container registry
+        id: login
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY}}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the Container
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.TEST_TAG }}
+
+      - name: Run the Container
+        id: run
+        env:
+          DRY_RUN: true
+          DATADOG_API_KEY: DRY_RUN_API_KEY
+          DATADOG_US: true
+          EVENT_TITLE: Test Event
+          EVENT_TEXT: |
+            # Test Event Text
+
+            **This** is a *test* event.
+
+            * List item 1
+            * List item 2
+
+            [Link to Datadog](https://www.datadoghq.com/)
+          USE_MARKDOWN: true
+          EVENT_PRIORITY: low
+          EVENT_TAGS: '["env:testing", "team:devops", "role:testing-event-action]'
+          EVENT_ALERT_TYPE: info
+          EVENT_AGGREGATION_KEY: ${{ github.run_id }}
+        run: |
+          docker run \
+            --env DRY_RUN="${{ env.DRY_RUN }}" \
+            --env ENVENT_TITLE="${{ env.EVENT_TITLE }}" \
+            --env EVENT_TEXT="${{ env.EVENT_TEXT }}" \
+            --env USE_MARKDOWN="${{ env.USE_MARKDOWN }}" \
+            --env EVENT_PRIORITY="${{ env.EVENT_PRIORITY }}" \
+            --env EVENT_TAGS="${{ env.EVENT_TAGS }}" \
+            --env EVENT_ALERT_TYPE="${{ env.EVENT_ALERT_TYPE }}" \
+            --env EVENT_AGGREGATION_KEY="${{ env.EVENT_AGGREGATION_KEY }}" \
+            --env DATADOG_API_KEY="${{ env.DATADOG_API_KEY }}" \
+            --env DATADOG_US="${{ env.DATADOG_US }}" \
+            --rm ${{ env.TEST_TAG }}
+
+  test-action:
+    name: Test Local Action
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Test Local Action
+        id: test-action
+        uses: ./
+        with:
+          dry_run: true
+          datadog_api_key: DRY_RUN_API_KEY
+          datadog_us: true
+          title: Test Event
+          text: |
+            # Test Event Text
+
+            **This** is a *test* event.
+
+            * List item 1
+            * List item 2
+
+            [Link to Datadog](https://www.datadoghq.com/)
+          use_markdown: true
+          priority: low
+          aggregation_key: ${{ github.run_id }}
+          tags: '["env:testing", "team:devops", "role:testing-event-action]'
+          alert_type: info
+
+      - name: Print Output
+        id: output
+        run: |
+          echo 'Event ID: ${{ steps.test-action.outputs.event_id }}'
+          echo 'Event URL: ${{ steps.test-action.outputs.event_url }}'
+          echo 'Event JSON: ${{ steps.test-action.outputs.json }}'

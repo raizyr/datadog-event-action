@@ -8,32 +8,67 @@ inputs:
   datadog_api_key:
     description: 'Your Datadog API key'
     required: true
-  event_title:
-    description: 'The title of the event'
-    required: true
-  event_text:
-    description: 'The text of the event'
-    required: true
-  event_priority:
-    description: 'Event priority, Can be one of normal or low. Default: normal'
-    required: false
-  event_tags:
-    description: 'optional, see README for more information'
-    required: false
-  event_alert_type:
-    description: 'Event alert type, Can be one of error, warning, info, or success. Default: info'
-    required: false
   datadog_us:
     description: 'Use the Datadog US endpoint. Default: EU endpoint'
     required: false
+  title:
+    description: 'The title of the event'
+    required: true
+  text:
+    description: 'The text of the event'
+    required: true
+  use_markdown:
+    description: "Set to false to disable Datadog's Markdown Rendering of the event text. Default: true"
+    required: false
+  priority:
+    description: 'Event priority, Can be one of normal or low. Default: normal'
+    required: false
+  tags:
+    description: 'optional, see README for more information'
+    required: false
+  alert_type:
+    description: 'Event alert type, Can be one of error, warning, info, or success. Default: info'
+    required: false
+  aggregation_key:
+    description: 'optional, see https://docs.datadoghq.com/api/latest/events/ for more information'
+    required: false
+  date_happened:
+    description: 'POSIX timestamp of the event, Default: current time'
+    required: false
+  device_name:
+    description: 'A device name'
+    required: false
+  host:
+    description: 'Host name to associate with the event.  Any tags associated with the host will also be applied to the event.'
+    required: false
+  related_event_id:
+    description: 'The ID of the event to which this event is related'
+    required: false
+  dry_run:
+    description: 'Set to true to test the action without emitting an event. Default: false'
+    required: false
+outputs:
+  event_id:
+    description: 'The ID of the event that was created'
+  event_url:
+    description: 'The URL of the event that was created'
+  json:
+    description: 'The JSON response from the Datadog API'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   env:
+    DRY_RUN: ${{ inputs.dry_run }}
     DATADOG_API_KEY: ${{ inputs.datadog_api_key }}
-    EVENT_TITLE: ${{ inputs.event_title }}
-    EVENT_TEXT: ${{ inputs.event_text }}
-    EVENT_PRIORITY: ${{ inputs.event_priority }}
-    EVENT_TAGS: ${{ inputs.event_tags }}
-    EVENT_ALERT_TYPE: ${{ inputs.event_alert_type }}
     DATADOG_US: ${{ inputs.datadog_us }}
+    EVENT_TITLE: ${{ inputs.title }}
+    EVENT_TEXT: ${{ inputs.text }}
+    USE_MARKDOWN: ${{ inputs.use_markdown }}
+    EVENT_PRIORITY: ${{ inputs.priority }}
+    EVENT_TAGS: ${{ inputs.tags }}
+    EVENT_ALERT_TYPE: ${{ inputs.alert_type }}
+    EVENT_AGGREGATION_KEY: ${{ inputs.aggregation_key }}
+    EVENT_DATE_HAPPENED: ${{ inputs.date_happened }}
+    EVENT_DEVICE_NAME: ${{ inputs.device_name }}
+    EVENT_HOST: ${{ inputs.host }}
+    RELATED_EVENT_ID: ${{ inputs.related_event_id }}
