@@ -92,7 +92,7 @@ fi
 
 if [[ -n "$RELATED_EVENT_ID" ]]; then
   echo "::debug file=entrypoint.sh,line=$LINENO::RELATED_EVENT_ID $RELATED_EVENT_ID"
-  json=$(echo $json | jq -c --arg parent_id "${RELATED_EVENT_ID}" '. + {related_event_id: $parent_id}')
+  json=$(echo $json | jq -c --argjson parent_id ${RELATED_EVENT_ID} '. + {related_event_id: $parent_id}')
   echo "::notice file=entrypoint.sh,line=$LINENO::added RELATED_EVENT_ID $RELATED_EVENT_ID"
   echo "::debug file=entrypoint.sh,line=$LINENO::$json"
 fi

@@ -18,8 +18,8 @@ permissions:
   contents: read
 
 jobs:
-  build-docker:
-    name: Build Docker Action
+  test-docker:
+    name: Test Docker Action
     runs-on: ubuntu-latest
 
     # Run a local registry to push to
@@ -132,3 +132,27 @@ jobs:
           echo 'Event ID: ${{ steps.test-action.outputs.event_id }}'
           echo 'Event URL: ${{ steps.test-action.outputs.event_url }}'
           echo 'Event JSON: ${{ steps.test-action.outputs.json }}'
+
+      - name: Test Related Event
+        id: test-related-event
+        uses: ./
+        with:
+          dry_run: true
+          datadog_api_key: DRY_RUN_API_KEY
+          datadog_us: true
+          title: Test Related Event
+          text: |
+            # Test Related Event Text
+
+            **This** is a *test* related event.
+
+            * List item 1
+            * List item 2
+
+            [Link to Datadog](https://www.datadoghq.com/)
+          use_markdown: true
+          priority: low
+          aggregation_key: ${{ github.run_id }}
+          tags: '["env:testing", "team:devops", "role:testing-event-action"]'
+          alert_type: info
+          related_event_id: ${{ steps.test-action.outputs.event_id }}
