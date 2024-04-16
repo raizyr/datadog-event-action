@@ -83,7 +83,7 @@ jobs:
         run: |
           docker run \
             --env DRY_RUN="${{ env.DRY_RUN }}" \
-            --env ENVENT_TITLE="${{ env.EVENT_TITLE }}" \
+            --env EVENT_TITLE="${{ env.EVENT_TITLE }}" \
             --env EVENT_TEXT="${{ env.EVENT_TEXT }}" \
             --env USE_MARKDOWN="${{ env.USE_MARKDOWN }}" \
             --env EVENT_PRIORITY="${{ env.EVENT_PRIORITY }}" \
