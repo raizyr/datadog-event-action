@@ -29,6 +29,12 @@ if [[ -z "$EVENT_ALERT_TYPE" ]]; then
   echo "::notice file=entrypoint.sh,line=$LINENO::using default 'alert_type' $EVENT_ALERT_TYPE"
 fi
 
+if [[ -z "$EVENT_SOURCE_TYPE" ]]; then
+  # https://docs.datadoghq.com/integrations/faq/list-of-api-source-attribute-value/
+  EVENT_SOURCE_TYPE="github"
+  echo "::notice file=entrypoint.sh,line=$LINENO::using default 'source_type_name' $EVENT_SOURCE_TYPE"
+fi
+
 if [ "$DATADOG_US" = true ]; then
   # error, warning, info, and success.
   endpoint="https://api.datadoghq.com"
@@ -49,7 +55,7 @@ json=$(
     --arg alert_type "${EVENT_ALERT_TYPE}" \
     --argjson date_happened ${EVENT_DATE_HAPPENED} \
     --arg priority "${EVENT_PRIORITY}" \
-    --arg source_type_name "githubapps" \
+    --arg source_type_name "${EVENT_SOURCE_TYPE}" \
     --arg title "${EVENT_TITLE}" \
     --arg text "${TXT}" \
     '$ARGS.named'

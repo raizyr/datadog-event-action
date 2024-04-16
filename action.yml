@@ -1,9 +1,9 @@
-name: 'DataDog Event Action'
-description: 'Trigger DataDog Events from GitHub Actions'
-author: 'Glennmen'
+name: 'Send DataDog Event'
+description: 'Send DataDog Events from GitHub Actions'
+author: 'raizyr'
 branding:
-  icon: bell
-  color: purple
+  icon: zap
+  color: orange
 inputs:
   datadog_api_key:
     description: 'Your Datadog API key'
@@ -47,6 +47,9 @@ inputs:
   dry_run:
     description: 'Set to true to test the action without emitting an event. Default: false'
     required: false
+  event_source_type:
+    description: 'The source type of the event. See https://docs.datadoghq.com/integrations/faq/list-of-api-source-attribute-value/. Default: "github"'
+    required: false
 outputs:
   event_id:
     description: 'The ID of the event that was created'
@@ -71,4 +74,5 @@ runs:
     EVENT_DATE_HAPPENED: ${{ inputs.date_happened }}
     EVENT_DEVICE_NAME: ${{ inputs.device_name }}
     EVENT_HOST: ${{ inputs.host }}
+    EVENT_SOURCE_TYPE: ${{ inputs.event_source_type }}
     RELATED_EVENT_ID: ${{ inputs.related_event_id }}
