@@ -1,4 +1,11 @@
-# DataDog Events - GitHub Action
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/dd_icon_white.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/dd_icon_rgb.svg">
+    <img alt="Datadog Logo" src="assets/dd_icon_rgb.svg" height="64" width="64">
+  </picture>
+  DataDog Events - GitHub Action
+</h1>
 
 A GitHub Action that triggers DataDog Events.
 
