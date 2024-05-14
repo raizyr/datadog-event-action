@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -ex
 DATE_HAPPENED=$(date +%s)
 MD_PREFIX="%%% 
 "
